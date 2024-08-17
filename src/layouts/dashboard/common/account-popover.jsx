@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { decodeJwt } from 'jose'; // Importa la función para decodificar el token
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -15,31 +17,61 @@ import { account } from 'src/_mock/account';
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
+    label: 'Dashboard',
     icon: 'eva:home-fill',
   },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
+  // {
+  //   label: 'Perfil',
+  //   icon: 'eva:person-fill',
+  // },
+  // {
+  //   label: 'Configuración',
+  //   icon: 'eva:settings-2-fill',
+  // },
 ];
 
 // ----------------------------------------------------------------------
+function capitalizeFirstLetter(string) {
+  return string ? string.charAt(0).toUpperCase() + string.slice(1) : '';
+}
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
+    console.log('Popover opened');  // Añadir mensaje de consola
   };
 
   const handleClose = () => {
     setOpen(null);
+    console.log('Popover closed');  // Añadir mensaje de consola
   };
+
+  const handleLogout = () => {
+    console.log('Logout clicked');  // Añadir mensaje de consola
+    localStorage.removeItem('token');
+    localStorage.clear();
+    navigate('/login');
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log('Stored token:', token);  // Añade este log para verificar el token almacenado
+
+    if (token) {
+      const decoded = decodeJwt(token); // Decodifica el token para obtener los datos del usuario
+      console.log('Decoded token:', decoded); // Verifica el contenido del token en la consola
+      setUser({
+        firstName: decoded.firstName, // Asegúrate de que estas propiedades existen en tu token
+        lastName: decoded.lastName,
+        email: decoded.email,
+        role: decoded.role,
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -57,7 +89,7 @@ export default function AccountPopover() {
       >
         <Avatar
           src={account.photoURL}
-          alt={account.displayName}
+          alt={user.firstName}
           sx={{
             width: 36,
             height: 36,
@@ -85,10 +117,13 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {user.firstName}&nbsp;{user.lastName}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'primary.orange' }} noWrap>
+            {capitalizeFirstLetter(user.role)}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {user.email}
           </Typography>
         </Box>
 
@@ -105,7 +140,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={handleLogout}  // Asegúrate de usar handleLogout
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
@@ -114,3 +149,7 @@ export default function AccountPopover() {
     </>
   );
 }
+
+
+
+

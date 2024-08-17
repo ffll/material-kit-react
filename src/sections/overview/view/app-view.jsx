@@ -1,4 +1,6 @@
 import { faker } from '@faker-js/faker';
+import { useState, useEffect } from 'react';
+import { decodeJwt } from 'jose'; // Asegúrate de que jose esté importado
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -19,16 +21,29 @@ import AppConversionRates from '../app-conversion-rates';
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+
+  const [userName, setUserName] = useState('');
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = decodeJwt(token);
+      setUserName(`${decoded.firstName} ${decoded.lastName}`);
+    }
+  }, []);
+
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Hi, Welcome back 👋
+        Hola {userName} 👋
       </Typography>
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Weekly Sales"
+            title="Weeklyy Sales"
             total={714000}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}

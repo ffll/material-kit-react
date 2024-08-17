@@ -35,6 +35,7 @@ export function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+
 export function applyFilter({ inputData, comparator, filterName }) {
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -47,10 +48,22 @@ export function applyFilter({ inputData, comparator, filterName }) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (filterName) {
-    inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    );
+    inputData = inputData.filter((user) => {
+      // Asegúrate de que los campos que estás filtrando existan
+      const firstName = user.firstName ? user.firstName.toLowerCase() : '';
+      const lastName = user.lastName ? user.lastName.toLowerCase() : '';
+      const email = user.email ? user.email.toLowerCase() : '';
+
+      // Filtra por firstName, lastName, o email
+      return (
+        firstName.includes(filterName.toLowerCase()) ||
+        lastName.includes(filterName.toLowerCase()) ||
+        email.includes(filterName.toLowerCase())
+      );
+    });
   }
 
   return inputData;
 }
+
+

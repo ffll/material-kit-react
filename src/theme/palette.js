@@ -24,6 +24,8 @@ export const primary = {
   dark: '#0C44AE',
   darker: '#042174',
   contrastText: '#FFFFFF',
+  orange: '#FF9F1C',
+  green: '#98C5C9',
 };
 
 export const secondary = {

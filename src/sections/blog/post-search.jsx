@@ -1,18 +1,18 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
-
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 PostSearch.propTypes = {
   posts: PropTypes.array.isRequired,
+  onSelect: PropTypes.func.isRequired, // Añadido para manejar la selección de un post
 };
 
-export default function PostSearch({ posts }) {
+export default function PostSearch({ posts, onSelect }) {
   return (
     <Autocomplete
       sx={{ width: 280 }}
@@ -31,6 +31,7 @@ export default function PostSearch({ posts }) {
       options={posts}
       getOptionLabel={(post) => post.title}
       isOptionEqualToValue={(option, value) => option.id === value.id}
+      onChange={(event, value) => onSelect(value)} // Esto se llama cuando un post es seleccionado
       renderInput={(params) => (
         <TextField
           {...params}
@@ -51,3 +52,4 @@ export default function PostSearch({ posts }) {
     />
   );
 }
+

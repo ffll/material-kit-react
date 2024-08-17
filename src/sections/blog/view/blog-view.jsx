@@ -25,6 +25,7 @@ export default function BlogView() {
   const [userRole, setUserRole] = useState(null);
   const [userId, setUserId] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]); // Nuevo estado para manejar posts filtrados
   const [open, setOpen] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', description: '', imageUrl: '' });
   const [editPost, setEditPost] = useState(null);
@@ -47,6 +48,7 @@ export default function BlogView() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPosts(response.data);
+        setFilteredPosts(response.data); // Inicialmente, mostrar todos los posts
       } catch (error) {
         console.error('Error fetching posts:', error.response?.data || error.message);
       }
@@ -86,6 +88,7 @@ export default function BlogView() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(response.data);
+      setFilteredPosts(response.data); // Actualizar también la lista filtrada
 
       handleClose();
 
@@ -113,6 +116,7 @@ export default function BlogView() {
       });
 
       setPosts(posts.filter((post) => post._id !== deletePost));
+      setFilteredPosts(filteredPosts.filter((post) => post._id !== deletePost)); // Actualizar también la lista filtrada
       setConfirmDeleteOpen(false);
 
       toast.success('Contenido eliminado con éxito!');
@@ -140,6 +144,7 @@ export default function BlogView() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(response.data);
+      setFilteredPosts(response.data); // Actualizar también la lista filtrada
 
       toast.success('Contenido actualizado con éxito!');
     } catch (error) {
@@ -154,6 +159,14 @@ export default function BlogView() {
 
   const handleCloseView = () => {
     setViewPost(null);
+  };
+
+  const handleSelectPost = (selectedPost) => {
+    if (selectedPost) {
+      setFilteredPosts([selectedPost]); // Muestra solo el post seleccionado
+    } else {
+      setFilteredPosts(posts); // Si no se selecciona nada, muestra todos los posts
+    }
   };
 
   return (
@@ -175,7 +188,7 @@ export default function BlogView() {
       </Stack>
 
       <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-        <PostSearch posts={posts} />
+        <PostSearch posts={posts} onSelect={handleSelectPost} />
         <PostSort
           options={[
             { value: 'latest', label: 'Lo más nuevo' },
@@ -186,7 +199,7 @@ export default function BlogView() {
       </Stack>
 
       <Grid container spacing={3}>
-        {posts.map((post, index) => (
+        {filteredPosts.map((post, index) => (
           <PostCard
             key={post._id}
             post={post}

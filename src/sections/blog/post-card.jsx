@@ -12,7 +12,7 @@ import { fDate } from 'src/utils/format-time';
 import { fShortenNumber } from 'src/utils/format-number';
 
 export default function PostCard({ post, index, userRole, onEdit, onOpen, onDelete }) {
-  const { cover, title, createdAt, views, interactions } = post;
+  const { imageUrl, title, createdAt, views, interactions } = post;
 
   return (
     <Grid xs={12} sm={6} md={3}>
@@ -30,7 +30,7 @@ export default function PostCard({ post, index, userRole, onEdit, onOpen, onDele
           <Box
             component="img"
             alt={title}
-            src={cover || '/assets/default_post_img.svg'} // Imagen por defecto si no hay cover
+            src={imageUrl || '/assets/default_post_img.svg'} // Utiliza imageUrl en lugar de cover
             sx={{
               top: 0,
               width: 1,
@@ -135,5 +135,4 @@ PostCard.propTypes = {
   onOpen: PropTypes.func.isRequired, // Función para manejar la apertura del modal
   onDelete: PropTypes.func.isRequired, // Función para manejar la eliminación
 };
-
 

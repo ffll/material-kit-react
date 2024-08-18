@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -17,6 +16,7 @@ export default function PostCard({ post, index, userRole, onEdit, onOpen, onDele
   return (
     <Grid xs={12} sm={6} md={3}>
       <Card
+        onClick={() => onOpen(post)} // Hacemos toda la tarjeta clicable
         sx={{
           cursor: 'pointer',
           transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
@@ -24,6 +24,7 @@ export default function PostCard({ post, index, userRole, onEdit, onOpen, onDele
             transform: 'scale(1.05)', // Aumenta el tamaño ligeramente
             boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', // Añade una sombra más pronunciada
           },
+          position: 'relative',
         }}
       >
         <Box sx={{ position: 'relative', pt: 'calc(100% * 3 / 4)' }}>
@@ -48,22 +49,49 @@ export default function PostCard({ post, index, userRole, onEdit, onOpen, onDele
               gap: 1,
               zIndex: 10,
             }}
+            onClick={(e) => e.stopPropagation()} // Evita que el clic en los iconos propague el evento
           >
-            <IconButton aria-label="share">
+            <IconButton
+              aria-label="share"
+              sx={{
+                backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fondo oscuro
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)', // Más oscuro al hacer hover
+                },
+              }}
+            >
               <Iconify icon="eva:share-fill" sx={{ color: 'white' }} />
             </IconButton>
             {userRole === 'admin' && (
               <>
-                <IconButton aria-label="edit" onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(post);
-                }}>
+                <IconButton
+                  aria-label="edit"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(post);
+                  }}
+                  sx={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fondo oscuro
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)', // Más oscuro al hacer hover
+                    },
+                  }}
+                >
                   <Iconify icon="eva:edit-fill" sx={{ color: 'white' }} />
                 </IconButton>
-                <IconButton aria-label="delete" onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(post._id);
-                }}>
+                <IconButton
+                  aria-label="delete"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(post._id);
+                  }}
+                  sx={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fondo oscuro
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)', // Más oscuro al hacer hover
+                    },
+                  }}
+                >
                   <Iconify icon="eva:trash-2-fill" sx={{ color: 'white' }} />
                 </IconButton>
               </>
@@ -76,9 +104,9 @@ export default function PostCard({ post, index, userRole, onEdit, onOpen, onDele
             {fDate(createdAt)}
           </Typography>
 
-          <Link
-            color="inherit"
+          <Typography
             variant="subtitle2"
+            color="inherit"
             underline="hover"
             sx={{
               height: 44,
@@ -89,18 +117,6 @@ export default function PostCard({ post, index, userRole, onEdit, onOpen, onDele
             }}
           >
             {title}
-          </Link>
-
-          <Typography
-            variant="body2"
-            color="primary"
-            sx={{ mt: 1, cursor: 'pointer' }}
-            onClick={(e) => {
-              e.stopPropagation(); // Evita que el clic se propague al Card
-              onOpen(post); // Abre el modal de visualización
-            }}
-          >
-            Ver documentación a solicitar
           </Typography>
 
           <Stack
